@@ -1,6 +1,6 @@
 # Event-Driven Microservices with Apache Kafka
 
-> **CTSE Lab 06 — Microservices + Kafka**
+> **CTSE Lab 06 — Microservices + Kafka**  
 > **Author:** THAMEL W M A
 
 A Spring Boot microservices architecture demonstrating event-driven communication using Apache Kafka (KRaft mode — no ZooKeeper).
@@ -48,7 +48,8 @@ Client (Postman / curl)
 ## 📁 Project Structure
 
 ```
-01/
+CTSE_Lab06_Microservices_Kafka/
+├── .gitignore                          # Ignore build artifacts, IDE files, and temp files
 ├── docker-compose.yml                  # Kafka (KRaft) container
 ├── kafka-microservices.postman_collection.json
 │
@@ -84,7 +85,7 @@ Client (Postman / curl)
 
 ### Step 1 — Start Kafka
 
-From the project root (`01/` directory):
+From the project root (`CTSE_Lab06_Microservices_Kafka/` directory):
 
 ```bash
 docker-compose up -d
