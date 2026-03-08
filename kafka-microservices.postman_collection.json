@@ -1,0 +1,203 @@
+{
+  "info": {
+    "name": "Kafka Microservices - Lab06",
+    "_postman_id": "kafka-microservices-lab06",
+    "description": "Test collection for event-driven microservices architecture using Apache Kafka.\n\nFlow:\n  POST /orders → API Gateway (8080) → Order Service (8081) → [order-topic] → Inventory Service (8082) + Billing Service (8083)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Order Service (Direct)",
+      "item": [
+        {
+          "name": "Create Order - Laptop",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"ORD-1001\",\n  \"item\": \"Laptop\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8081/orders",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8081",
+              "path": ["orders"]
+            },
+            "description": "Send order directly to Order Service (bypasses Gateway). Publishes to Kafka topic 'order-topic'."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Via API Gateway",
+      "item": [
+        {
+          "name": "Create Order - Laptop",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response contains OrderId', function () {",
+                  "    pm.expect(pm.response.text()).to.include('ORD-1001');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"ORD-1001\",\n  \"item\": \"Laptop\",\n  \"quantity\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/orders",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["orders"]
+            },
+            "description": "Routes through API Gateway (port 8080) → Order Service (port 8081) → Kafka topic 'order-topic'.\n\nExpected:\n- HTTP 201 Created\n- Body: \"Order placed successfully! OrderId: ORD-1001\"\n\nCheck service terminals for:\n- Order Service:    'Order Service: Event Published'\n- Inventory Service: 'Stock Updated'\n- Billing Service:   'Invoice Generated'"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order - Phone",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response contains OrderId', function () {",
+                  "    pm.expect(pm.response.text()).to.include('ORD-1002');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"ORD-1002\",\n  \"item\": \"Phone\",\n  \"quantity\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/orders",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["orders"]
+            },
+            "description": "Second test order via API Gateway."
+          },
+          "response": []
+        },
+        {
+          "name": "Create Order - Headphones",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test('Response contains OrderId', function () {",
+                  "    pm.expect(pm.response.text()).to.include('ORD-1003');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"orderId\": \"ORD-1003\",\n  \"item\": \"Headphones\",\n  \"quantity\": 3\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/orders",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["orders"]
+            },
+            "description": "Third test order via API Gateway."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "gateway_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "order_service_url",
+      "value": "http://localhost:8081",
+      "type": "string"
+    }
+  ]
+}
